@@ -5,22 +5,8 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ClipboardCopyIcon, DotsHorizontalIcon, DownloadIcon, Link2Icon, SizeIcon } from '@radix-ui/react-icons'
 
-interface ImageActionsProps {
-  shouldMerge?: boolean
-  isLink?: boolean
-  onView?: () => void
-  onDownload?: () => void
-  onCopy?: () => void
-  onCopyLink?: () => void
-}
-
-interface ActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: React.ReactNode
-  tooltip: string
-}
-
-export const ActionWrapper = React.memo(
-  React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ children, className, ...props }, ref) => (
+const ActionWrapper = React.memo(
+  React.forwardRef(({ children, className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
@@ -37,8 +23,8 @@ export const ActionWrapper = React.memo(
 
 ActionWrapper.displayName = 'ActionWrapper'
 
-export const ActionButton = React.memo(
-  React.forwardRef<HTMLButtonElement, ActionButtonProps>(({ icon, tooltip, className, ...props }, ref) => (
+const ActionButton = React.memo(
+  React.forwardRef(({ icon, tooltip, className, ...props }, ref) => (
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
@@ -61,29 +47,22 @@ export const ActionButton = React.memo(
 
 ActionButton.displayName = 'ActionButton'
 
-type ActionKey = 'onView' | 'onDownload' | 'onCopy' | 'onCopyLink'
-
-const ActionItems: Array<{
-  key: ActionKey
-  icon: React.ReactNode
-  tooltip: string
-  isLink?: boolean
-}> = [
+const ActionItems = [
   { key: 'onView', icon: <SizeIcon className="size-4" />, tooltip: 'View image' },
   { key: 'onDownload', icon: <DownloadIcon className="size-4" />, tooltip: 'Download image' },
   { key: 'onCopy', icon: <ClipboardCopyIcon className="size-4" />, tooltip: 'Copy image to clipboard' },
   { key: 'onCopyLink', icon: <Link2Icon className="size-4" />, tooltip: 'Copy image link', isLink: true }
 ]
 
-export const ImageActions: React.FC<ImageActionsProps> = React.memo(
+const ImageActions = React.memo(
   ({ shouldMerge = false, isLink = false, ...actions }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
-    const handleAction = React.useCallback((e: React.MouseEvent, action: (() => void) | undefined) => {
+    const handleAction = (e, action) => {
       e.preventDefault()
       e.stopPropagation()
       action?.()
-    }, [])
+    }
 
     const filteredActions = React.useMemo(() => ActionItems.filter(item => isLink || !item.isLink), [isLink])
 
@@ -120,3 +99,5 @@ export const ImageActions: React.FC<ImageActionsProps> = React.memo(
 )
 
 ImageActions.displayName = 'ImageActions'
+
+export { ActionWrapper, ActionButton, ImageActions }

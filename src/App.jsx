@@ -7,7 +7,6 @@ import { z } from 'zod'
 import { cn } from './lib/utils'
 import { Hero } from './components/custom/hero'
 import { BentoMinimalTiptap } from './components/custom/types'
-import type { Editor } from '@tiptap/core'
 import { useCallback, useRef } from 'react'
 
 export default function App() {
@@ -32,11 +31,9 @@ const formSchema = z.object({
     .min(1, 'Description is required')
 })
 
-type FormValues = z.infer<typeof formSchema>
-
-export const ExampleForm: React.FC = () => {
-  const editorRef = useRef<Editor | null>(null)
-  const form = useForm<FormValues>({
+export const ExampleForm = () => {
+  const editorRef = useRef(null)
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: ''
@@ -44,7 +41,7 @@ export const ExampleForm: React.FC = () => {
   })
 
   const handleCreate = useCallback(
-    ({ editor }: { editor: Editor }) => {
+    ({ editor }) => {
       if (form.getValues('description') && editor.isEmpty) {
         editor.commands.setContent(form.getValues('description'))
       }
@@ -53,7 +50,7 @@ export const ExampleForm: React.FC = () => {
     [form]
   )
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = (values) => {
     console.log('==Getting values from form==')
     console.log(values)
     console.log('Success: Values retrieved from form')

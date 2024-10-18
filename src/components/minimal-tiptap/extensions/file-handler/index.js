@@ -1,17 +1,8 @@
-import { type Editor, Extension } from '@tiptap/core'
+import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
-import type { FileError, FileValidationOptions } from '../../utils'
 import { filterFiles } from '../../utils'
 
-type FileHandlePluginOptions = {
-  key?: PluginKey
-  editor: Editor
-  onPaste?: (editor: Editor, files: File[], pasteContent?: string) => void
-  onDrop?: (editor: Editor, files: File[], pos: number) => void
-  onValidationError?: (errors: FileError[]) => void
-} & FileValidationOptions
-
-const FileHandlePlugin = (options: FileHandlePluginOptions) => {
+const FileHandlePlugin = (options) => {
   const { key, editor, onPaste, onDrop, onValidationError, allowedMimeTypes, maxFileSize } = options
 
   return new Plugin({
@@ -77,7 +68,7 @@ const FileHandlePlugin = (options: FileHandlePluginOptions) => {
   })
 }
 
-export const FileHandler = Extension.create<Omit<FileHandlePluginOptions, 'key' | 'editor'>>({
+export const FileHandler = Extension.create({
   name: 'fileHandler',
 
   addOptions() {

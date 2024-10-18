@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet-async'
 
-export const SEO: React.FC = () => {
+export const SEO = () => {
   const title = 'Minimal Tiptap - Streamlined Rich Text Editing for React'
   const description =
     'Experience effortless rich text editing with Minimal Tiptap. A lightweight, customizable editor built on Tiptap for React applications. Boost your content creation with minimal setup.'

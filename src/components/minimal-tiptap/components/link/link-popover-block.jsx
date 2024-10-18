@@ -1,19 +1,13 @@
-import * as React from 'react'
+import React, { useState, useCallback } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { ToolbarButton } from '../toolbar-button'
 import { CopyIcon, ExternalLinkIcon, LinkBreak2Icon } from '@radix-ui/react-icons'
 
-interface LinkPopoverBlockProps {
-  url: string
-  onClear: () => void
-  onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void
-}
+const LinkPopoverBlock = ({ url, onClear, onEdit }) => {
+  const [copyTitle, setCopyTitle] = useState('Copy')
 
-export const LinkPopoverBlock: React.FC<LinkPopoverBlockProps> = ({ url, onClear, onEdit }) => {
-  const [copyTitle, setCopyTitle] = React.useState<string>('Copy')
-
-  const handleCopy = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCopy = useCallback(
+    (e) => {
       e.preventDefault()
       navigator.clipboard
         .writeText(url)
@@ -26,7 +20,7 @@ export const LinkPopoverBlock: React.FC<LinkPopoverBlockProps> = ({ url, onClear
     [url]
   )
 
-  const handleOpenLink = React.useCallback(() => {
+  const handleOpenLink = useCallback(() => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }, [url])
 
@@ -60,3 +54,5 @@ export const LinkPopoverBlock: React.FC<LinkPopoverBlockProps> = ({ url, onClear
     </div>
   )
 }
+
+export default LinkPopoverBlock

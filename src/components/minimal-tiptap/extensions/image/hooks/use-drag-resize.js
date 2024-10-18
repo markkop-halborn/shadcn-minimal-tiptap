@@ -1,20 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 
-type ResizeDirection = 'left' | 'right'
-export type ElementDimensions = { width: number; height: number }
-
-type HookParams = {
-  initialWidth?: number
-  initialHeight?: number
-  contentWidth?: number
-  contentHeight?: number
-  gridInterval: number
-  minWidth: number
-  minHeight: number
-  maxWidth: number
-  onDimensionsChange?: (dimensions: ElementDimensions) => void
-}
-
 export function useDragResize({
   initialWidth,
   initialHeight,
@@ -25,18 +10,18 @@ export function useDragResize({
   minHeight,
   maxWidth,
   onDimensionsChange
-}: HookParams) {
-  const [dimensions, updateDimensions] = useState<ElementDimensions>({
+}) {
+  const [dimensions, updateDimensions] = useState({
     width: Math.max(initialWidth ?? minWidth, minWidth),
     height: Math.max(initialHeight ?? minHeight, minHeight)
   })
   const [boundaryWidth, setBoundaryWidth] = useState(Infinity)
   const [resizeOrigin, setResizeOrigin] = useState(0)
   const [initialDimensions, setInitialDimensions] = useState(dimensions)
-  const [resizeDirection, setResizeDirection] = useState<ResizeDirection | undefined>()
+  const [resizeDirection, setResizeDirection] = useState(undefined)
 
   const widthConstraint = useCallback(
-    (proposedWidth: number, maxAllowedWidth: number) => {
+    (proposedWidth, maxAllowedWidth) => {
       const effectiveMinWidth = Math.max(
         minWidth,
         Math.min(contentWidth ?? minWidth, (gridInterval / 100) * maxAllowedWidth)
@@ -47,7 +32,7 @@ export function useDragResize({
   )
 
   const handlePointerMove = useCallback(
-    (event: PointerEvent) => {
+    (event) => {
       event.preventDefault()
       const movementDelta = (resizeDirection === 'left' ? resizeOrigin - event.pageX : event.pageX - resizeOrigin) * 2
       const gridUnitWidth = (gridInterval / 100) * boundaryWidth
@@ -76,7 +61,7 @@ export function useDragResize({
   )
 
   const handlePointerUp = useCallback(
-    (event: PointerEvent) => {
+    (event) => {
       event.preventDefault()
       event.stopPropagation()
 
@@ -88,7 +73,7 @@ export function useDragResize({
   )
 
   const handleKeydown = useCallback(
-    (event: KeyboardEvent) => {
+    (event) => {
       if (event.key === 'Escape') {
         event.preventDefault()
         event.stopPropagation()
@@ -103,7 +88,7 @@ export function useDragResize({
   )
 
   const initiateResize = useCallback(
-    (direction: ResizeDirection) => (event: React.PointerEvent<HTMLDivElement>) => {
+    (direction) => (event) => {
       event.preventDefault()
       event.stopPropagation()
 

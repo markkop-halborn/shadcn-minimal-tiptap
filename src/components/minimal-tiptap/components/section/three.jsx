@@ -1,7 +1,4 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
-import type { toggleVariants } from '@/components/ui/toggle'
-import type { VariantProps } from 'class-variance-authority'
 import { CaretDownIcon, CheckIcon } from '@radix-ui/react-icons'
 import { ToolbarButton } from '../toolbar-button'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
@@ -9,19 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTheme } from '../../hooks/use-theme'
 
-interface ColorItem {
-  cssVar: string
-  label: string
-  darkLabel?: string
-}
-
-interface ColorPalette {
-  label: string
-  colors: ColorItem[]
-  inverse: string
-}
-
-const COLORS: ColorPalette[] = [
+const COLORS = [
   {
     label: 'Palette 1',
     inverse: 'hsl(var(--background))',
@@ -53,22 +38,17 @@ const COLORS: ColorPalette[] = [
     inverse: 'hsl(var(--foreground))',
     colors: [
       { cssVar: 'hsl(var(--background))', label: 'White', darkLabel: 'Black' },
-      { cssVar: 'var(--mt-accent-blue-subtler)', label: 'Blue subtle' },
-      { cssVar: 'var(--mt-accent-teal-subtler)', label: 'Teal subtle' },
-      { cssVar: 'var(--mt-accent-green-subtler)', label: 'Green subtle' },
-      { cssVar: 'var(--mt-accent-yellow-subtler)', label: 'Yellow subtle' },
-      { cssVar: 'var(--mt-accent-red-subtler)', label: 'Red subtle' },
-      { cssVar: 'var(--mt-accent-purple-subtler)', label: 'Purple subtle' }
+      { cssVar: 'var(--mt-accent-blue-subtle)', label: 'Blue subtle' },
+      { cssVar: 'var(--mt-accent-teal-subtle)', label: 'Teal subtle' },
+      { cssVar: 'var(--mt-accent-green-subtle)', label: 'Green subtle' },
+      { cssVar: 'var(--mt-accent-yellow-subtle)', label: 'Yellow subtle' },
+      { cssVar: 'var(--mt-accent-red-subtle)', label: 'Red subtle' },
+      { cssVar: 'var(--mt-accent-purple-subtle)', label: 'Purple subtle' }
     ]
   }
 ]
 
-const MemoizedColorButton = React.memo<{
-  color: ColorItem
-  isSelected: boolean
-  inverse: string
-  onClick: (value: string) => void
-}>(({ color, isSelected, inverse, onClick }) => {
+const MemoizedColorButton = React.memo(({ color, isSelected, inverse, onClick }) => {
   const isDarkMode = useTheme()
   const label = isDarkMode && color.darkLabel ? color.darkLabel : color.label
 
@@ -80,7 +60,7 @@ const MemoizedColorButton = React.memo<{
           value={color.cssVar}
           aria-label={label}
           style={{ backgroundColor: color.cssVar }}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          onClick={(e) => {
             e.preventDefault()
             onClick(color.cssVar)
           }}
@@ -97,16 +77,11 @@ const MemoizedColorButton = React.memo<{
 
 MemoizedColorButton.displayName = 'MemoizedColorButton'
 
-const MemoizedColorPicker = React.memo<{
-  palette: ColorPalette
-  selectedColor: string
-  inverse: string
-  onColorChange: (value: string) => void
-}>(({ palette, selectedColor, inverse, onColorChange }) => (
+const MemoizedColorPicker = React.memo(({ palette, selectedColor, inverse, onColorChange }) => (
   <ToggleGroup
     type="single"
     value={selectedColor}
-    onValueChange={(value: string) => {
+    onValueChange={(value) => {
       if (value) onColorChange(value)
     }}
     className="gap-1.5"
@@ -125,16 +100,12 @@ const MemoizedColorPicker = React.memo<{
 
 MemoizedColorPicker.displayName = 'MemoizedColorPicker'
 
-interface SectionThreeProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-}
-
-export const SectionThree: React.FC<SectionThreeProps> = ({ editor, size, variant }) => {
+const SectionThree = ({ editor, size, variant }) => {
   const color = editor.getAttributes('textStyle')?.color || 'hsl(var(--foreground))'
   const [selectedColor, setSelectedColor] = React.useState(color)
 
   const handleColorChange = React.useCallback(
-    (value: string) => {
+    (value) => {
       setSelectedColor(value)
       editor.chain().setColor(value).run()
     },

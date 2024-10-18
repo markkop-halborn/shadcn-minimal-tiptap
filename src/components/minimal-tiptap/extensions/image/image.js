@@ -1,58 +1,14 @@
-import type { ImageOptions } from '@tiptap/extension-image'
 import { Image as TiptapImage } from '@tiptap/extension-image'
-import type { Editor } from '@tiptap/react'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { ImageViewBlock } from './components/image-view-block'
-import { filterFiles, sanitizeUrl, type FileError, type FileValidationOptions } from '../../utils'
+import { filterFiles, sanitizeUrl } from '../../utils'
 
-interface DownloadImageCommandProps {
-  src: string
-  alt?: string
-}
-
-interface ImageActionProps {
-  src: string
-  alt?: string
-  action: 'download' | 'copyImage' | 'copyLink'
-}
-
-interface CustomImageOptions extends ImageOptions, Omit<FileValidationOptions, 'allowBase64'> {
-  uploadFn?: (file: string, editor: Editor) => Promise<string>
-  onActionSuccess?: (props: ImageActionProps) => void
-  onActionError?: (error: Error, props: ImageActionProps) => void
-  customDownloadImage?: (props: ImageActionProps, options: CustomImageOptions) => void
-  customCopyImage?: (props: ImageActionProps, options: CustomImageOptions) => void
-  customCopyLink?: (props: ImageActionProps, options: CustomImageOptions) => void
-  onValidationError?: (errors: FileError[]) => void
-}
-
-declare module '@tiptap/core' {
-  interface Commands<ReturnType> {
-    setImages: {
-      setImages: (attrs: { src: string | File; alt?: string; title?: string }[]) => ReturnType
-    }
-    downloadImage: {
-      downloadImage: (attrs: DownloadImageCommandProps) => ReturnType
-    }
-    copyImage: {
-      copyImage: (attrs: DownloadImageCommandProps) => ReturnType
-    }
-    copyLink: {
-      copyLink: (attrs: DownloadImageCommandProps) => ReturnType
-    }
-  }
-}
-
-const handleError = (
-  error: unknown,
-  props: ImageActionProps,
-  errorHandler?: (error: Error, props: ImageActionProps) => void
-) => {
+const handleError = (error, props, errorHandler) => {
   const typedError = error instanceof Error ? error : new Error('Unknown error')
   errorHandler?.(typedError, props)
 }
 
-const handleDataUrl = (src: string): { blob: Blob; extension: string } => {
+const handleDataUrl = (src) => {
   const [header, base64Data] = src.split(',')
   const mimeType = header.split(':')[1].split(';')[0]
   const extension = mimeType.split('/')[1]
@@ -65,7 +21,7 @@ const handleDataUrl = (src: string): { blob: Blob; extension: string } => {
   return { blob, extension }
 }
 
-const handleImageUrl = async (src: string): Promise<{ blob: Blob; extension: string }> => {
+const handleImageUrl = async (src) => {
   const response = await fetch(src)
   if (!response.ok) throw new Error('Failed to fetch image')
   const blob = await response.blob()
@@ -73,7 +29,7 @@ const handleImageUrl = async (src: string): Promise<{ blob: Blob; extension: str
   return { blob, extension }
 }
 
-const fetchImageBlob = async (src: string): Promise<{ blob: Blob; extension: string }> => {
+const fetchImageBlob = async (src) => {
   if (src.startsWith('data:')) {
     return handleDataUrl(src)
   } else {
@@ -81,7 +37,7 @@ const fetchImageBlob = async (src: string): Promise<{ blob: Blob; extension: str
   }
 }
 
-const saveImage = async (blob: Blob, name: string, extension: string): Promise<void> => {
+const saveImage = async (blob, name, extension) => {
   const imageURL = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = imageURL
@@ -92,7 +48,7 @@ const saveImage = async (blob: Blob, name: string, extension: string): Promise<v
   URL.revokeObjectURL(imageURL)
 }
 
-const defaultDownloadImage = async (props: ImageActionProps, options: CustomImageOptions): Promise<void> => {
+const defaultDownloadImage = async (props, options) => {
   const { src, alt } = props
   const potentialName = alt || 'image'
 
@@ -105,7 +61,7 @@ const defaultDownloadImage = async (props: ImageActionProps, options: CustomImag
   }
 }
 
-const defaultCopyImage = async (props: ImageActionProps, options: CustomImageOptions) => {
+const defaultCopyImage = async (props, options) => {
   const { src } = props
   try {
     const res = await fetch(src)
@@ -117,7 +73,7 @@ const defaultCopyImage = async (props: ImageActionProps, options: CustomImageOpt
   }
 }
 
-const defaultCopyLink = async (props: ImageActionProps, options: CustomImageOptions) => {
+const defaultCopyLink = async (props, options) => {
   const { src } = props
   try {
     await navigator.clipboard.writeText(src)
@@ -127,7 +83,7 @@ const defaultCopyLink = async (props: ImageActionProps, options: CustomImageOpti
   }
 }
 
-export const Image = TiptapImage.extend<CustomImageOptions>({
+export const Image = TiptapImage.extend({
   atom: true,
 
   addOptions() {

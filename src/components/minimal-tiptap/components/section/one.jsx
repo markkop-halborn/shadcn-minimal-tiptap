@@ -1,22 +1,16 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
-import type { Level } from '@tiptap/extension-heading'
-import type { FormatAction } from '../../types'
-import type { VariantProps } from 'class-variance-authority'
-import type { toggleVariants } from '@/components/ui/toggle'
+import { Editor } from '@tiptap/react'
+import { Level } from '@tiptap/extension-heading'
+import { FormatAction } from '../../types'
+import { VariantProps } from 'class-variance-authority'
+import { toggleVariants } from '@/components/ui/toggle'
 import { cn } from '@/lib/utils'
 import { CaretDownIcon, LetterCaseCapitalizeIcon } from '@radix-ui/react-icons'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ToolbarButton } from '../toolbar-button'
 import { ShortcutKey } from '../shortcut-key'
 
-interface TextStyle extends Omit<FormatAction, 'value' | 'icon' | 'action' | 'isActive' | 'canExecute'> {
-  element: keyof JSX.IntrinsicElements
-  level?: Level
-  className: string
-}
-
-const formatActions: TextStyle[] = [
+const formatActions = [
   {
     label: 'Normal Text',
     element: 'span',
@@ -67,12 +61,7 @@ const formatActions: TextStyle[] = [
   }
 ]
 
-interface SectionOneProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-  activeLevels?: Level[]
-}
-
-export const SectionOne: React.FC<SectionOneProps> = React.memo(
+export const SectionOne = React.memo(
   ({ editor, activeLevels = [1, 2, 3, 4, 5, 6], size, variant }) => {
     const filteredActions = React.useMemo(
       () => formatActions.filter(action => !action.level || activeLevels.includes(action.level)),
@@ -80,7 +69,7 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
     )
 
     const handleStyleChange = React.useCallback(
-      (level?: Level) => {
+      (level) => {
         if (level) {
           editor.chain().focus().toggleHeading({ level }).run()
         } else {
@@ -91,7 +80,7 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
     )
 
     const renderMenuItem = React.useCallback(
-      ({ label, element: Element, level, className, shortcuts }: TextStyle) => (
+      ({ label, element: Element, level, className, shortcuts }) => (
         <DropdownMenuItem
           key={label}
           onClick={() => handleStyleChange(level)}
