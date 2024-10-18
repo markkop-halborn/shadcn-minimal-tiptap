@@ -1,30 +1,13 @@
 import * as React from 'react'
 import '@/components/minimal-tiptap/styles/index.css'
 
-import type { Content, Editor } from '@tiptap/react'
-import type { UseMinimalTiptapEditorProps } from '@/components/minimal-tiptap/hooks/use-minimal-tiptap'
 import { EditorContent } from '@tiptap/react'
 import { cn } from '@/lib/utils'
 import { SectionTwo } from '@/components/minimal-tiptap/components/section/two'
 import { LinkBubbleMenu } from '@/components/minimal-tiptap/components/bubble-menu/link-bubble-menu'
 import { useMinimalTiptapEditor } from '@/components/minimal-tiptap/hooks/use-minimal-tiptap'
 
-export interface MinimalTiptapProps extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
-  value?: Content
-  onChange?: (value: Content) => void
-  className?: string
-  editorContentClassName?: string
-}
-
-const Toolbar = ({ editor }: { editor: Editor }) => (
-  <div className="shrink-0 overflow-x-auto border-t border-border p-2">
-    <div className="flex w-max items-center gap-px">
-      <SectionTwo editor={editor} activeActions={['bold', 'italic', 'strikethrough', 'code']} mainActionCount={5} />
-    </div>
-  </div>
-)
-
-export const MinimalTiptapOne = React.forwardRef<HTMLDivElement, MinimalTiptapProps>(
+export const MinimalTiptapOne = React.forwardRef(
   ({ value, onChange, className, editorContentClassName, ...props }, ref) => {
     const editor = useMinimalTiptapEditor({
       value,
@@ -53,5 +36,13 @@ export const MinimalTiptapOne = React.forwardRef<HTMLDivElement, MinimalTiptapPr
 )
 
 MinimalTiptapOne.displayName = 'MinimalTiptapOne'
+
+const Toolbar = ({ editor }) => (
+  <div className="shrink-0 overflow-x-auto border-t border-border p-2">
+    <div className="flex w-max items-center gap-px">
+      <SectionTwo editor={editor} activeActions={['bold', 'italic', 'strikethrough', 'code']} mainActionCount={5} />
+    </div>
+  </div>
+)
 
 export default MinimalTiptapOne

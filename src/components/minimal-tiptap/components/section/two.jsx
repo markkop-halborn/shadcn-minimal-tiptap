@@ -1,8 +1,8 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
-import type { FormatAction } from '../../types'
-import type { toggleVariants } from '@/components/ui/toggle'
-import type { VariantProps } from 'class-variance-authority'
+import { Editor } from '@tiptap/react'
+import { FormatAction } from '../../types'
+import { toggleVariants } from '@/components/ui/toggle'
+import { VariantProps } from 'class-variance-authority'
 import {
   CodeIcon,
   DotsHorizontalIcon,
@@ -13,13 +13,7 @@ import {
 } from '@radix-ui/react-icons'
 import { ToolbarSection } from '../toolbar-section'
 
-type TextStyleAction = 'bold' | 'italic' | 'strikethrough' | 'code' | 'clearFormatting'
-
-interface TextStyle extends FormatAction {
-  value: TextStyleAction
-}
-
-const formatActions: TextStyle[] = [
+const formatActions = [
   {
     value: 'bold',
     label: 'Bold',
@@ -67,13 +61,7 @@ const formatActions: TextStyle[] = [
   }
 ]
 
-interface SectionTwoProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-  activeActions?: TextStyleAction[]
-  mainActionCount?: number
-}
-
-export const SectionTwo: React.FC<SectionTwoProps> = ({
+const SectionTwo = ({
   editor,
   activeActions = formatActions.map(action => action.value),
   mainActionCount = 2,

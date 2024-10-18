@@ -1,22 +1,11 @@
 import * as React from 'react'
-import type { ShouldShowProps } from '../../types'
-import type { Editor } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react'
 import { LinkEditBlock } from '../link/link-edit-block'
 import { LinkPopoverBlock } from '../link/link-popover-block'
 
-interface LinkBubbleMenuProps {
-  editor: Editor
-}
-
-interface LinkAttributes {
-  href: string
-  target: string
-}
-
-export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
+export const LinkBubbleMenu = ({ editor }) => {
   const [showEdit, setShowEdit] = React.useState(false)
-  const [linkAttrs, setLinkAttrs] = React.useState<LinkAttributes>({ href: '', target: '' })
+  const [linkAttrs, setLinkAttrs] = React.useState({ href: '', target: '' })
   const [selectedText, setSelectedText] = React.useState('')
 
   const updateLinkState = React.useCallback(() => {
@@ -29,7 +18,7 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
   }, [editor])
 
   const shouldShow = React.useCallback(
-    ({ editor, from, to }: ShouldShowProps) => {
+    ({ editor, from, to }) => {
       if (from === to) {
         return false
       }
@@ -49,7 +38,7 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
   }, [])
 
   const onSetLink = React.useCallback(
-    (url: string, text?: string, openInNewTab?: boolean) => {
+    (url, text, openInNewTab) => {
       editor
         .chain()
         .focus()

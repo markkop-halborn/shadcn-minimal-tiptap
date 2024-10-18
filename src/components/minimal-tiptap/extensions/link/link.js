@@ -1,21 +1,11 @@
 import { mergeAttributes } from '@tiptap/core'
 import TiptapLink from '@tiptap/extension-link'
-import type { EditorView } from '@tiptap/pm/view'
 import { getMarkRange } from '@tiptap/core'
 import { Plugin, TextSelection } from '@tiptap/pm/state'
 
 export const Link = TiptapLink.extend({
-  /*
-   * Determines whether typing next to a link automatically becomes part of the link.
-   * In this case, we dont want any characters to be included as part of the link.
-   */
   inclusive: false,
 
-  /*
-   * Match all <a> elements that have an href attribute, except for:
-   * - <a> elements with a data-type attribute set to button
-   * - <a> elements with an href attribute that contains 'javascript:'
-   */
   parseHTML() {
     return [{ tag: 'a[href]:not([data-type="button"]):not([href *= "javascript:" i])' }]
   },
@@ -41,13 +31,9 @@ export const Link = TiptapLink.extend({
       ...(this.parent?.() || []),
       new Plugin({
         props: {
-          handleKeyDown: (_: EditorView, event: KeyboardEvent) => {
+          handleKeyDown: (_, event) => {
             const { selection } = editor.state
 
-            /*
-             * Handles the 'Escape' key press when there's a selection within the link.
-             * This will move the cursor to the end of the link.
-             */
             if (event.key === 'Escape' && selection.empty !== true) {
               editor.commands.focus(selection.to, { scrollIntoView: false })
             }
@@ -55,10 +41,6 @@ export const Link = TiptapLink.extend({
             return false
           },
           handleClick(view, pos) {
-            /*
-             * Marks the entire link when the user clicks on it.
-             */
-
             const { schema, doc, tr } = view.state
             const range = getMarkRange(doc.resolve(pos), schema.marks.link)
 

@@ -1,16 +1,10 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
-interface ImageEditBlockProps {
-  editor: Editor
-  close: () => void
-}
-
-export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({ editor, close }) => {
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+export const ImageEditBlock = ({ editor, close }) => {
+  const fileInputRef = React.useRef(null)
   const [link, setLink] = React.useState('')
 
   const handleClick = React.useCallback(() => {
@@ -18,7 +12,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({ editor, close })
   }, [])
 
   const handleFile = React.useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e) => {
       const files = e.target.files
       if (!files?.length) return
 
@@ -39,7 +33,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({ editor, close })
   )
 
   const handleSubmit = React.useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
+    (e) => {
       e.preventDefault()
       e.stopPropagation()
 
@@ -63,7 +57,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({ editor, close })
             placeholder="https://example.com"
             value={link}
             className="grow"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLink(e.target.value)}
+            onChange={(e) => setLink(e.target.value)}
           />
           <Button type="submit" className="ml-2">
             Submit

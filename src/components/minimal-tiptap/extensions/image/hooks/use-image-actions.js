@@ -1,24 +1,7 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/core'
-import type { Node } from '@tiptap/pm/model'
 import { isUrl } from '../../../utils'
 
-interface UseImageActionsProps {
-  editor: Editor
-  node: Node
-  src: string
-  onViewClick: (value: boolean) => void
-}
-
-export type ImageActionHandlers = {
-  onView?: () => void
-  onDownload?: () => void
-  onCopy?: () => void
-  onCopyLink?: () => void
-  onRemoveImg?: () => void
-}
-
-export const useImageActions = ({ editor, node, src, onViewClick }: UseImageActionsProps) => {
+export const useImageActions = ({ editor, node, src, onViewClick }) => {
   const isLink = React.useMemo(() => isUrl(src), [src])
 
   const onView = React.useCallback(() => {

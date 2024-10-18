@@ -1,19 +1,11 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
-import type { FormatAction } from '../../types'
-import type { toggleVariants } from '@/components/ui/toggle'
-import type { VariantProps } from 'class-variance-authority'
+import { Editor } from '@tiptap/react'
 import { CaretDownIcon, CodeIcon, DividerHorizontalIcon, PlusIcon, QuoteIcon } from '@radix-ui/react-icons'
 import { LinkEditPopover } from '../link/link-edit-popover'
 import { ImageEditDialog } from '../image/image-edit-dialog'
 import { ToolbarSection } from '../toolbar-section'
 
-type InsertElementAction = 'codeBlock' | 'blockquote' | 'horizontalRule'
-interface InsertElement extends FormatAction {
-  value: InsertElementAction
-}
-
-const formatActions: InsertElement[] = [
+const formatActions = [
   {
     value: 'codeBlock',
     label: 'Code block',
@@ -43,19 +35,7 @@ const formatActions: InsertElement[] = [
   }
 ]
 
-interface SectionFiveProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-  activeActions?: InsertElementAction[]
-  mainActionCount?: number
-}
-
-export const SectionFive: React.FC<SectionFiveProps> = ({
-  editor,
-  activeActions = formatActions.map(action => action.value),
-  mainActionCount = 0,
-  size,
-  variant
-}) => {
+const SectionFive = ({ editor, activeActions = formatActions.map(action => action.value), mainActionCount = 0, size, variant }) => {
   return (
     <>
       <LinkEditPopover editor={editor} size={size} variant={variant} />

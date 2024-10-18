@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
-import type { ElementDimensions } from '../hooks/use-drag-resize'
+import { NodeViewWrapper } from '@tiptap/react'
 import { useDragResize } from '../hooks/use-drag-resize'
 import { ResizeHandle } from './resize-handle'
 import { cn } from '@/lib/utils'
@@ -17,18 +16,9 @@ const MAX_HEIGHT = 600
 const MIN_HEIGHT = 120
 const MIN_WIDTH = 120
 
-interface ImageState {
-  src: string
-  isServerUploading: boolean
-  imageLoaded: boolean
-  isZoomed: boolean
-  error: boolean
-  naturalSize: ElementDimensions
-}
-
-export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, getPos, selected, updateAttributes }) => {
+export const ImageViewBlock = ({ editor, node, getPos, selected, updateAttributes }) => {
   const { src: initialSrc, width: initialWidth, height: initialHeight } = node.attrs
-  const [imageState, setImageState] = React.useState<ImageState>({
+  const [imageState, setImageState] = React.useState({
     src: initialSrc,
     isServerUploading: false,
     imageLoaded: false,
@@ -37,8 +27,8 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, getPos, 
     naturalSize: { width: initialWidth, height: initialHeight }
   })
 
-  const containerRef = React.useRef<HTMLDivElement>(null)
-  const [activeResizeHandle, setActiveResizeHandle] = React.useState<'left' | 'right' | null>(null)
+  const containerRef = React.useRef(null)
+  const [activeResizeHandle, setActiveResizeHandle] = React.useState(null)
 
   const focus = React.useCallback(() => {
     const { view } = editor
@@ -47,7 +37,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, getPos, 
   }, [editor, getPos])
 
   const onDimensionsChange = React.useCallback(
-    ({ width, height }: ElementDimensions) => {
+    ({ width, height }) => {
       focus()
       updateAttributes({ width, height })
     },
@@ -79,8 +69,8 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, getPos, 
   const shouldMerge = React.useMemo(() => currentWidth <= 180, [currentWidth])
 
   const handleImageLoad = React.useCallback(
-    (ev: React.SyntheticEvent<HTMLImageElement>) => {
-      const img = ev.target as HTMLImageElement
+    (ev) => {
+      const img = ev.target
       const newNaturalSize = {
         width: img.naturalWidth,
         height: img.naturalHeight
@@ -109,7 +99,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, getPos, 
   }, [])
 
   const handleResizeStart = React.useCallback(
-    (direction: 'left' | 'right') => (event: React.PointerEvent<HTMLDivElement>) => {
+    (direction) => (event) => {
       setActiveResizeHandle(direction)
       initiateResize(direction)(event)
     },

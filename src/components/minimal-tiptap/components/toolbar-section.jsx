@@ -1,26 +1,12 @@
 import * as React from 'react'
-import type { Editor } from '@tiptap/react'
-import type { FormatAction } from '../types'
-import type { VariantProps } from 'class-variance-authority'
-import type { toggleVariants } from '@/components/ui/toggle'
-import { cn } from '@/lib/utils'
-import { CaretDownIcon } from '@radix-ui/react-icons'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ToolbarButton } from './toolbar-button'
 import { ShortcutKey } from './shortcut-key'
 import { getShortcutKey } from '../utils'
+import { cn } from '@/lib/utils'
+import { CaretDownIcon } from '@radix-ui/react-icons'
 
-interface ToolbarSectionProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-  actions: FormatAction[]
-  activeActions?: string[]
-  mainActionCount?: number
-  dropdownIcon?: React.ReactNode
-  dropdownTooltip?: string
-  dropdownClassName?: string
-}
-
-export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
+const ToolbarSection = ({
   editor,
   actions,
   activeActions = actions.map(action => action.value),
@@ -43,7 +29,7 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
   }, [actions, activeActions, mainActionCount])
 
   const renderToolbarButton = React.useCallback(
-    (action: FormatAction) => (
+    (action) => (
       <ToolbarButton
         key={action.label}
         onClick={() => action.action(editor)}
@@ -61,7 +47,7 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
   )
 
   const renderDropdownMenuItem = React.useCallback(
-    (action: FormatAction) => (
+    (action) => (
       <DropdownMenuItem
         key={action.label}
         onClick={() => action.action(editor)}
